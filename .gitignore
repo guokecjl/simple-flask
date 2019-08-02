@@ -1,2 +1,7 @@
 local_config.py
 logs/
+.idea/
+*.pyc
+/venv
+/env
+tmp.py
