@@ -1,9 +1,11 @@
 # coding: utf-8
 
 import apps.demo.url
+import apps.auth.url
 
 sub_routes = [
-    ('', apps.demo.url.urls)
+    ('', apps.demo.url.urls),
+    ('', apps.auth.url.urls)
 ]
 
 def register_urls(app):

@@ -20,3 +20,8 @@ DEBUG_LOG = os.path.join(LOG_PATH, "debug.log")
 INFO_LOG = os.path.join(LOG_PATH, "info.log")
 WARNING_LOG = os.path.join(LOG_PATH, "warning.log")
 ERROR_LOG = os.path.join(LOG_PATH, "error.log")
+
+try:
+    from local_config import *
+except Exception as e:
+    pass
