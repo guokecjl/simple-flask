@@ -5,3 +5,4 @@ logs/
 /venv
 /env
 tmp.py
+__pycache__
