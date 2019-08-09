@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from .auth import IndexHandler
+from .index import IndexHandler
 
 urls = [
     ("/", IndexHandler.as_view("index")),
