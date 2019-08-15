@@ -8,7 +8,7 @@ from lib.logger import logger
 
 class IndexHandler(BaseHandler):
 
-    def get(self):
+    def get(self, *args, **kwargs):
         try:
             return render_template('index.html')
         except Exception:

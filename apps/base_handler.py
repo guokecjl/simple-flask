@@ -41,11 +41,9 @@ class BaseHandler(MethodView):
         response.headers['Access-Control-Allow-Origin'] = "*"
         response.headers['Access-Control-Allow-Credentials'] = 'true'
         response.headers["Content-type"] = "application/json"
-        response.headers[
-            'Access-Control-Allow-Headers'] = \
-            'origin, x-csrftoken, content-type, accept, x-requested-with'
         response.headers['Access-Control-Allow-Headers'] = \
-            'origin, x-csrftoken, Content-Type, accept, responseType'
+            'origin, x-csrftoken, Content-Type, accept, responseType, ' \
+            'x-requested-with'
         return response
 
     @staticmethod

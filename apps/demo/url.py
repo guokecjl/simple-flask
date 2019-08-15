@@ -3,5 +3,5 @@
 from .hello import HelloWorldHandler
 
 urls = [
-    ('/hello', HelloWorldHandler.as_view('hellow'))
+    ('/demo/hello', HelloWorldHandler.as_view('hellow'))
 ]

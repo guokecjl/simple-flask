@@ -10,7 +10,7 @@ from lib.logger import logger
 class LoginHandler(BaseHandler):
 
     args_format = {
-        'email': fields.Str(required=True, validate=bool),
+        'user_name': fields.Str(required=True, validate=bool),
         'password': fields.Str(required=True, validate=bool)
 
     }
@@ -18,6 +18,8 @@ class LoginHandler(BaseHandler):
     @use_args(args_format)
     def post(self, args):
         try:
-            email, pwd = args['email'], args['password']
+            user_name, pwd = args['user_name'], args['password']
+            print(user_name, pwd)
+            return self.write_response({})
         except Exception:
             logger.exception('登录出错')
