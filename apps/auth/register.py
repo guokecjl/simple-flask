@@ -24,6 +24,18 @@ class RegisterHandler(BaseHandler):
             if password != re_password:
                 return self.write_response(status=0, err_msg='两次密码不一致',
                                            err_code=1202)
+
+            user_info = self.account.UserProfile.find_one({
+                '_id': user_name
+            })
+            if user_info:
+                return self.write_response(status=0, err_code=1202,
+                                           err_msg='该用户已经存在')
+
+            insert_data = {
+                '_id': user_name,
+                'pwd': ''
+            }
             return self.write_response({})
         except Exception:
             logger.exception('注册出错')

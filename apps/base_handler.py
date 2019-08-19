@@ -7,9 +7,8 @@ from flask import make_response, request
 from flask.views import MethodView
 
 from lib.logger import logger
-# from database_clients.redis_cli import redis_cli
-# from database_clients.mongo_cli import g4tect_client, gt_account_client,\
-#     gt_data_center_client
+from database_clients.redis_cli import redis_cli
+from database_clients.mongo_cli import account_mgo, admin_mgo
 # from database_clients.mysql_cli import mysql_engine
 from config import DEBUG, LOGIN_URL
 
@@ -27,10 +26,9 @@ class BaseHandler(MethodView):
     def __init__(self, **kwargs):
         super(BaseHandler, self).__init__()
         self.logger = logger
-        # self.redis_cli = redis_cli
-        # self.g4_db = g4tect_client
-        # self.account_db = gt_account_client
-        # self.data_db = gt_data_center_client
+        self.redis_cli = redis_cli
+        self.account = account_mgo
+        self.admin = admin_mgo
         # self.mysql = mysql_engine
 
         self.power = []
