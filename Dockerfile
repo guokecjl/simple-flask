@@ -5,6 +5,7 @@ WORKDIR /www
 ADD . /www
 
 RUN apt-get install -y git \
+    && git submodule init \
     && git submodule update --remote \
     && git submodule update \
     && cp /usr/share/zoneinfo/Asia/Shanghai  /etc/localtime \
