@@ -1,2 +1,5 @@
 .gitignore
 Dockerfile
+/venv
+__pycache__
+/logs
