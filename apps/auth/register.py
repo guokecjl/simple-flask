@@ -34,7 +34,8 @@ class RegisterHandler(BaseHandler):
 
             insert_data = {
                 '_id': user_name,
-                'pwd': ''
+                'password': '',
+                'create_time': ''
             }
             return self.write_response({})
         except Exception:
