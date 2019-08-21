@@ -12,7 +12,6 @@ class LoginHandler(BaseHandler):
     args_format = {
         'user_name': fields.Str(required=True, validate=bool),
         'password': fields.Str(required=True, validate=bool)
-
     }
 
     @use_args(args_format)
