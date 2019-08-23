@@ -18,7 +18,12 @@ class LoginHandler(BaseHandler):
     def post(self, args):
         try:
             user_name, pwd = args['user_name'], args['password']
-            print(user_name, pwd)
+            user_info = self.account.UserProfile.find_one({
+                '_id': user_name
+            })
+            if not user_info:
+                return self.write_response(status=0, err_code=1202,
+                                           err_msg='用户名不存在')
             return self.write_response({})
         except Exception:
             logger.exception('登录出错')
