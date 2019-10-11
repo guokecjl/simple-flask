@@ -10,7 +10,8 @@ class IndexHandler(BaseHandler):
 
     def get(self, *args, **kwargs):
         try:
-            return render_template('index.html')
+            return self.write_response(status=0, err_code=567,
+                                       err_msg='接口调试成功')
         except Exception:
             logger.exception('加载静态文件出错')
             return self.write_response(status=0, err_code=1400,

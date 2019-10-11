@@ -10,11 +10,17 @@ from lib.logger import logger
 class RegisterHandler(BaseHandler):
 
     args_format = {
-        'user_name': fields.Str(required=True, validate=bool),
-        'password': fields.Str(required=True, validate=bool),
-        're_password': fields.Str(required=True, validate=bool)
+        'user_name': fields.Str(required=False, validate=bool),
+        'password': fields.Str(required=False, validate=bool),
+        're_password': fields.Str(required=False, validate=bool)
     }
 
+    @use_args(args_format)
+    def get(self, args):
+        try:
+            return self.write_response(data='register success')
+        except Exception:
+            logger.exception('register fail')
     @use_args(args_format)
     def post(self, args):
         try:
