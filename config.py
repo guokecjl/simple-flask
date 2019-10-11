@@ -53,6 +53,14 @@ REDIS_CONFIG = {
     }
 }
 
+# celery 配置
+# 中间人 redis://:password@hostname:port/db_number
+BROKER_URL = "redis://localhost:6379/0"
+# 存储任务的状态和返回值
+CELERY_RESULT_BACKEND = "redis://localhost:6379/1"
+# 可见性超时
+BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
+
 try:
     from local_config import *
 except Exception as e:
