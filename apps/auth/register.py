@@ -5,6 +5,7 @@ from marshmallow import fields
 
 from apps.base_handler import BaseHandler
 from lib.logger import logger
+from lib.tools import generate_now, encrypt_password
 
 
 class RegisterHandler(BaseHandler):
@@ -40,9 +41,10 @@ class RegisterHandler(BaseHandler):
 
             insert_data = {
                 '_id': user_name,
-                'password': '',
-                'create_time': ''
+                'password': encrypt_password(password),
+                'create_time': generate_now()
             }
+            self.account.UserProfile.insert_one(insert_data)
             return self.write_response({})
         except Exception:
             logger.exception('注册出错')
