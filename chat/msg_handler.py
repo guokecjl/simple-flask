@@ -6,6 +6,10 @@ date: 2019/9/21
 desc:
 """
 
+import time
+
+from database_clients.redis_cli import redis_cli
+
 
 class MsgHandler(object):
     """Msg Handler"""
@@ -13,37 +17,42 @@ class MsgHandler(object):
         self.name = name
         self._running = False
         self._stopped = False
-        self._observers = []
+        self.observers = []
 
-    def register(self, observer):
-        """register observer"""
-        self._observers.append(observer)
-
-    def start(self, redis_cli):
-        """msg handler loop"""
+    def start(self, pipe):
+        """msg process loop"""
         self._running = True
-
         while True:
-            for observer in self._observers:
-                try:
+            try:
+                print(self.observers)
+                is_recive = pipe.poll(timeout=1)
+                print(is_recive)
+                if is_recive:
+                    instance = pipe.recv()
+                    self.observers.append(instance)
+                for observer in self.observers:
                     ob_name = observer.name
-                    msg_key_list = redis_cli.keys('msg:*{reciver}'.format(reciver=ob_name))
+                    msg_key_list = redis_cli.keys('msg:*:{reciver}'.format(reciver=ob_name))
                     for msg_key in msg_key_list:
-                        _, sender, reciver = msg_key.split(':')
-                        msg_dict = redis_cli.hmget(msg_key)
-                        m_type, data = msg_dict['type'], msg_dict['data']
-                        observer.update(data, reciver, m_type)
-                except KeyError as e:
-                    print('KeyError: {}'.format(e))
-                except Exception as e:
-                    print('UnknowError: {}'.format(e))
+                        print(msg_key)
+                        _, sender, reciver = bytes.decode(msg_key).split(':')
+                        msg_dict = redis_cli.hgetall(msg_key)
+                        m_type, msg = msg_dict[b'msg_type'], msg_dict[b'msg']
+                        observer.receive(msg, sender, m_type)
+            except KeyError as e:
+                print('KeyError: {}'.format(e))
+            except Exception as e:
+                print('UnknowError: {}'.format(e))
 
             # 检测状态
             if self._stopped:
                 self._running = False
                 break
 
+            time.sleep(1)
+
     def close(self):
         """close handler"""
         if self._running:
             self._stopped = True
+

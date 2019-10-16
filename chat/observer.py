@@ -14,12 +14,11 @@ from database_clients.redis_cli import redis_cli
 class Observer(metaclass=ABCMeta):
     """Observer"""
 
-    def __init__(self, name, service):
+    def __init__(self, name):
         self.name = name
-        service.register(self)
 
     @abstractmethod
-    def update(self, msg, sender, m_type):
+    def receive(self, msg, sender, m_type):
         """update msg"""
         pass
 
@@ -27,31 +26,28 @@ class Observer(metaclass=ABCMeta):
 class MsgObserver(Observer):
     """msg observer"""
 
-    def __init__(self, name, manager):
-        super(MsgObserver, self).__init__(name, manager)
+    def __init__(self, name, msg_pipe):
+        self.msg_pipe = msg_pipe
+        super(MsgObserver, self).__init__(name)
 
     def send(self, reciver, msg, type):
         """ send msg """
-        msg_dict = {
-            'type': type,
-            'data': msg
-        }
-        redis_cli.hmset('msg:{sender}:{reciver}'.format(sender=self.name, reciver=reciver), msg_dict)
+        pass
 
-    def update(self, msg, sender, m_type):
+    def receive(self, msg, sender, m_type):
         """
         update msg
         定义向前端发送信息的接口
         """
-        print('\033[0;31;40m{sender}\033[0m[{type}]:\033[0;33;40m{msg}\033[0m'.format(sender=sender, type=m_type,
-                                                                                      msg=msg))
+        msg = ('msg:{sender}:{reciver}:{type}:{msg}'.format(sender=sender, reciver=self.name, type=m_type, msg=msg))
+        self.msg_pipe.write_message(msg)
 
 
 class MailObserver(Observer):
     """mail observer"""
 
     def __init__(self, name, manager):
-        super(MailObserver, self).__init__(name, manager)
+        super(MailObserver, self).__init__(name)
 
     def update(self, msg, sender, m_type):
         """update msg"""
@@ -60,17 +56,27 @@ class MailObserver(Observer):
 
 class Broker(object):
     """User object"""
-    def __init__(self, name, msg_handler):
+    def __init__(self, name):
         self.name = name
-        self.msg_handler = msg_handler
         self._users = {}
+
+    def create(self, name, msg_pipe):
+        """create user"""
+        if name not in self._users:
+            user = MsgObserver(name, msg_pipe)
+            self._users.setdefault(name, user)
+            msg_key_list = redis_cli.keys('msg:*:{reciver}'.format(reciver=name))
+            for msg_key in msg_key_list:
+                while True:
+                    data = redis_cli.lpop(msg_key)
+                    msg, msg_type = data.split(":")
+                    _, sender, reciver = bytes.decode(msg_key).split(':')
+                    user.receive(msg, sender, msg_type)
+        print('{} is online ^_^ !!!'.format(name))
 
     def get(self, name):
         """get user"""
-        if name not in self._users:
-            user = MsgObserver(name, self.msg_handler)
-            self._users.setdefault(name, user)
-        return self._users[name]
+        return self._users.get(name, None)
 
     def delete(self, name):
         """delete user"""
