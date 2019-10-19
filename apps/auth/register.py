@@ -11,17 +11,11 @@ from lib.tools import generate_now, encrypt_password
 class RegisterHandler(BaseHandler):
 
     args_format = {
-        'user_name': fields.Str(required=False, validate=bool),
-        'password': fields.Str(required=False, validate=bool),
-        're_password': fields.Str(required=False, validate=bool)
+        'user_name': fields.Str(required=True, validate=bool),
+        'password': fields.Str(required=True, validate=bool),
+        're_password': fields.Str(required=True, validate=bool)
     }
 
-    @use_args(args_format)
-    def get(self, args):
-        try:
-            return self.write_response(data='register success')
-        except Exception:
-            logger.exception('register fail')
     @use_args(args_format)
     def post(self, args):
         try:
@@ -45,7 +39,10 @@ class RegisterHandler(BaseHandler):
                 'create_time': generate_now()
             }
             self.account.UserProfile.insert_one(insert_data)
-            return self.write_response({})
+            return self.write_response(data={"id": user_name,
+                                             "password": password,
+                                             "re_password": re_password
+                                             })
         except Exception:
             logger.exception('注册出错')
             return self.write_response(status=0, err_msg='注册出错',
